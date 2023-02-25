@@ -1,9 +1,33 @@
 import CreatableReactSelect from "react-select/creatable"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { FormEvent, useRef, useState } from "react"
+import { NoteData, Tag } from "../App"
+import { v4 as uuidV4 } from "uuid"
 
-function Form() {
+type NoteFormProps = {
+  onSubmit: (data: NoteData) => void
+  onAddTag: (tag: Tag) => void
+  availableTags: Tag[]
+}
+
+function Form({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
+  const titleRef = useRef<HTMLInputElement>(null)
+  const textRef = useRef<HTMLTextAreaElement>(null)
+  const [tags, setTags] = useState<Tag[]>([])
+  const navigate = useNavigate()
+
+  function submitNote(e: FormEvent) {
+    e.preventDefault()
+    onSubmit({
+      title: titleRef.current!.value,
+      text: textRef.current!.value,
+      tags: tags,
+    })
+    navigate("..")
+  }
+
   return (
-    <form className="my-6 flex flex-col gap-8">
+    <form onSubmit={submitNote} className="my-6 flex flex-col gap-8">
       <div className="flex items-center gap-4">
         <div className="w-1/2">
           <label htmlFor="title" className="block">
@@ -13,7 +37,9 @@ function Form() {
             type="text"
             name="title"
             id="title"
+            ref={titleRef}
             placeholder="An interesting note"
+            required
             className="h-9 w-full rounded border border-zinc-300 py-0.5 px-2"
           />
         </div>
@@ -21,7 +47,27 @@ function Form() {
           <label htmlFor="tags" className="block">
             Tags
           </label>
-          <CreatableReactSelect isMulti />
+          <CreatableReactSelect
+            onCreateOption={(label) => {
+              const newTag = { id: uuidV4(), label }
+              onAddTag(newTag)
+              setTags((prev) => [...prev, newTag])
+            }}
+            options={availableTags.map((tag) => {
+              return { label: tag.label, value: tag.id }
+            })}
+            value={tags.map((tag) => {
+              return { label: tag.label, value: tag.id }
+            })}
+            onChange={(tags) => {
+              setTags(
+                tags.map((tag) => {
+                  return { label: tag.label, id: tag.value }
+                })
+              )
+            }}
+            isMulti
+          />
         </div>
       </div>
       <div>
@@ -32,6 +78,8 @@ function Form() {
           name="body"
           id="body"
           rows={15}
+          ref={textRef}
+          required
           placeholder="Mastiffs are among the largest dogs, and typically have a short coat, a long low-set tail and large feet..."
           className="w-full rounded border border-zinc-300 p-2"
         ></textarea>
