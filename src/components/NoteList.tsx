@@ -9,6 +9,10 @@ type SimplifiedNote = {
   id: string
 }
 
+type EditTagsModalProps = {
+  availableTags: Tag[]
+}
+
 type NoteListProps = {
   availableTags: Tag[]
   notes: Note[]
@@ -17,6 +21,8 @@ type NoteListProps = {
 function NoteList({ availableTags, notes }: NoteListProps) {
   const [tags, setTags] = useState<Tag[]>([])
   const [title, setTitle] = useState("")
+  //todo edit tags button
+  // const [showEditTags, setShowEditTags] = useState(false)
   const filteredNotes = useMemo(() => {
     return notes.filter((note) => {
       return (
@@ -40,9 +46,12 @@ function NoteList({ availableTags, notes }: NoteListProps) {
               Create
             </button>
           </Link>
-          <button className="rounded border border-zinc-300 py-2 px-4 transition-colors hover:bg-slate-100">
+          {/* <button
+            onClick={() => setShowEditTags(true)}
+            className="rounded border border-zinc-300 py-2 px-4 transition-colors hover:bg-slate-100"
+          >
             Edit Tags
-          </button>
+          </button> */}
         </div>
       </div>
       <form className="my-6 flex items-center gap-4">
@@ -88,6 +97,7 @@ function NoteList({ availableTags, notes }: NoteListProps) {
           </div>
         ))}
       </div>
+      {/* {showEditTags && <EditTagsModal availableTags={availableTags} />} */}
     </>
   )
 }
@@ -112,5 +122,33 @@ function NoteCard({ id, title, tags }: SimplifiedNote) {
     </Link>
   )
 }
+
+// function EditTagsModal({ availableTags }: EditTagsModalProps) {
+//   return (
+//     <div className="absolute top-1/2 left-1/2 flex h-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 transform flex-col border border-zinc-300 bg-white p-4">
+//       <h2 className="mb-2 text-2xl font-bold">Edit Tags</h2>
+//       <div className="flex flex-col gap-2">
+//         {availableTags.map((tag) => (
+//           <div className="border border-zinc-300">
+//             <div key={tag.id} className="flex items-center">
+//               <div className="w-fit truncate rounded bg-blue-500 py-1 px-2 text-white">
+//                 {tag.label}
+//               </div>
+//               <div className="ml-auto mr-4 text-black">x</div>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+//       <div className="ml-auto mt-1 flex gap-2">
+//         <button className="rounded border border-transparent bg-blue-500 py-2 px-4 text-white transition-colors hover:bg-blue-600">
+//           Save
+//         </button>
+//         <button className="rounded border border-zinc-300 py-2 px-4 transition-colors hover:bg-slate-100">
+//           Cancel
+//         </button>
+//       </div>
+//     </div>
+//   )
+// }
 
 export default NoteList

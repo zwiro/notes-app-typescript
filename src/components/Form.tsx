@@ -8,12 +8,19 @@ type NoteFormProps = {
   onSubmit: (data: NoteData) => void
   onAddTag: (tag: Tag) => void
   availableTags: Tag[]
-}
+} & Partial<NoteData>
 
-function Form({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
+function Form({
+  onSubmit,
+  onAddTag,
+  availableTags,
+  title = "",
+  text = "",
+  tags = [],
+}: NoteFormProps) {
   const titleRef = useRef<HTMLInputElement>(null)
   const textRef = useRef<HTMLTextAreaElement>(null)
-  const [tags, setTags] = useState<Tag[]>([])
+  const [allTags, setAllTags] = useState<Tag[]>([])
   const navigate = useNavigate()
 
   function submitNote(e: FormEvent) {
@@ -21,7 +28,7 @@ function Form({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
     onSubmit({
       title: titleRef.current!.value,
       text: textRef.current!.value,
-      tags: tags,
+      tags: allTags,
     })
     navigate("..")
   }
@@ -39,6 +46,7 @@ function Form({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
             id="title"
             ref={titleRef}
             placeholder="An interesting note"
+            defaultValue={title}
             required
             className="h-9 w-full rounded border border-zinc-300 py-0.5 px-2"
           />
@@ -51,17 +59,17 @@ function Form({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
             onCreateOption={(label) => {
               const newTag = { id: uuidV4(), label }
               onAddTag(newTag)
-              setTags((prev) => [...prev, newTag])
+              setAllTags((prev) => [...prev, newTag])
             }}
             options={availableTags.map((tag) => {
               return { label: tag.label, value: tag.id }
             })}
-            value={tags.map((tag) => {
+            value={allTags.map((tag) => {
               return { label: tag.label, value: tag.id }
             })}
-            onChange={(tags) => {
-              setTags(
-                tags.map((tag) => {
+            onChange={(allTags) => {
+              setAllTags(
+                allTags.map((tag) => {
                   return { label: tag.label, id: tag.value }
                 })
               )
@@ -80,6 +88,7 @@ function Form({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
           rows={15}
           ref={textRef}
           required
+          defaultValue={text}
           placeholder="Mastiffs are among the largest dogs, and typically have a short coat, a long low-set tail and large feet..."
           className="w-full rounded border border-zinc-300 p-2"
         ></textarea>
