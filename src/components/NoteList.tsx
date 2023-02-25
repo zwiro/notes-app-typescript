@@ -35,9 +35,11 @@ function NoteList({ availableTags, notes }: NoteListProps) {
       <div className="flex items-center">
         <h1 className="text-2xl font-bold">All notes</h1>
         <div className="ml-auto flex gap-2">
-          <button className="rounded border border-transparent bg-blue-500 py-2 px-4 text-white transition-colors hover:bg-blue-600">
-            Create
-          </button>
+          <Link to="/new">
+            <button className="rounded border border-transparent bg-blue-500 py-2 px-4 text-white transition-colors hover:bg-blue-600">
+              Create
+            </button>
+          </Link>
           <button className="rounded border border-zinc-300 py-2 px-4 transition-colors hover:bg-slate-100">
             Edit Tags
           </button>
@@ -79,7 +81,7 @@ function NoteList({ availableTags, notes }: NoteListProps) {
           />
         </div>
       </form>
-      <div className="grid columns-1 gap-3 sm:columns-2 md:columns-3 lg:columns-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {filteredNotes.map((note) => (
           <div key={note.id}>
             <NoteCard id={note.id} title={note.title} tags={note.tags} />
@@ -91,7 +93,24 @@ function NoteList({ availableTags, notes }: NoteListProps) {
 }
 
 function NoteCard({ id, title, tags }: SimplifiedNote) {
-  return <Link to={`/${id}`}></Link>
+  return (
+    <Link to={`/${id}`}>
+      <div className="flex h-64 flex-col items-center justify-center gap-4 border border-zinc-300">
+        <span className="text-xl font-bold">{title}</span>
+        <div className="flex gap-1">
+          {tags.length > 0 &&
+            tags.map((tag) => (
+              <div
+                key={tag.id}
+                className="truncate rounded bg-blue-500 py-1 px-2 text-white"
+              >
+                {tag.label}
+              </div>
+            ))}
+        </div>
+      </div>
+    </Link>
+  )
 }
 
 export default NoteList
